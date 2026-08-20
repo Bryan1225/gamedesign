@@ -206,7 +206,80 @@
     });
     document.addEventListener('keydown', function(e){
       if(e.key !== 'Escape') return;
+      // the image lightbox can sit on top of an open attachment modal — let its own
+      // Escape handler close that first instead of dropping both layers at once
+      if(document.querySelector('.img-lightbox.open')) return;
       var open = document.querySelector('.attachment-modal.open');
       if(open) closeModal(open);
+    });
+  })();
+
+  // ATTACHMENT IMAGE LIGHTBOX — click (or Enter/Space) any filled attachment thumbnail
+  // to view it full-size. Placeholder slots (SVG icon, no <img>) are left as-is since
+  // there's no real image to enlarge.
+  (function(){
+    var medias = Array.prototype.filter.call(
+      document.querySelectorAll('.attachment-media'),
+      function(el){ return el.querySelector('img'); }
+    );
+    if(!medias.length) return;
+
+    var lightbox = document.createElement('div');
+    lightbox.className = 'img-lightbox';
+    lightbox.setAttribute('role', 'dialog');
+    lightbox.setAttribute('aria-modal', 'true');
+    lightbox.setAttribute('aria-label', 'Enlarged image');
+    lightbox.setAttribute('inert', '');
+    lightbox.innerHTML =
+      '<div class="img-lightbox-backdrop" data-lightbox-close></div>' +
+      '<div class="img-lightbox-inner">' +
+        '<button type="button" class="img-lightbox-close" data-lightbox-close aria-label="Close">&times;</button>' +
+        '<img alt="">' +
+      '</div>';
+    document.body.appendChild(lightbox);
+    var lbImg = lightbox.querySelector('img');
+    var lbCloseBtn = lightbox.querySelector('.img-lightbox-close');
+    var lastTrigger = null;
+
+    function openLightbox(img, trigger){
+      lbImg.src = img.currentSrc || img.src;
+      lbImg.alt = img.alt || '';
+      lightbox.removeAttribute('inert');
+      lightbox.classList.add('open');
+      lastTrigger = trigger;
+      lbCloseBtn.focus();
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox(){
+      lightbox.classList.remove('open');
+      lightbox.setAttribute('inert', '');
+      document.body.style.overflow = '';
+      if(lastTrigger && lastTrigger.focus){ lastTrigger.focus(); }
+      lastTrigger = null;
+    }
+
+    medias.forEach(function(el){
+      el.classList.add('has-image');
+      var hint = document.createElement('span');
+      hint.className = 'zoom-hint';
+      hint.setAttribute('aria-hidden', 'true');
+      hint.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>';
+      el.appendChild(hint);
+
+      var img = el.querySelector('img');
+      el.setAttribute('role', 'button');
+      el.setAttribute('tabindex', '0');
+      el.setAttribute('aria-label', 'View full-size: ' + (img.alt || 'image'));
+      el.addEventListener('click', function(){ openLightbox(img, el); });
+      el.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openLightbox(img, el); }
+      });
+    });
+
+    lightbox.querySelectorAll('[data-lightbox-close]').forEach(function(el){
+      el.addEventListener('click', closeLightbox);
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && lightbox.classList.contains('open')){ closeLightbox(); }
     });
   })();
