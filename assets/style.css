@@ -29,14 +29,16 @@
     *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
   }
 
-  /* SCROLL REVEAL — elements fade + rise into place as they enter the viewport, via IntersectionObserver */
+  /* SCROLL REVEAL — elements fade + rise into place as they enter the viewport, via IntersectionObserver.
+     translateY + a slight scale-up reads as noticeably more "arriving" than opacity alone. */
   .reveal{
     opacity: 0;
-    transform: translateY(28px);
-    transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(52px) scale(0.97);
+    transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
     transition-delay: var(--reveal-delay, 0s);
+    will-change: opacity, transform;
   }
-  .reveal.in{ opacity: 1; transform: translateY(0); }
+  .reveal.in{ opacity: 1; transform: translateY(0) scale(1); }
 
   /* MERGE TEXT — words start scattered (offset in a random direction, slightly
      rotated and scaled down) and converge into place together, like pieces
@@ -445,7 +447,7 @@
 /* Filled attachment slots (real image, wired up via JS) invite a click to view full-size */
 .attachment-media.has-image{ cursor: zoom-in; }
 .attachment-media.has-image:focus-visible{ outline: 2px solid var(--accent-bright); outline-offset: -2px; }
-.attachment-media.has-image img{ transition: transform 0.45s cubic-bezier(0.25,0.1,0.25,1); }
+.attachment-media.has-image img{ transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); will-change: transform; }
 .attachment-media.has-image:hover img, .attachment-media.has-image:focus-visible img{ transform: scale(1.08); }
 .attachment-media .zoom-hint{
   position: absolute; right: 8px; bottom: 8px; width: 30px; height: 30px; border-radius: 50%;
