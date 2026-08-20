@@ -22,9 +22,12 @@
   (function(){
     var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var isTouch = window.matchMedia && window.matchMedia('(hover: none), (pointer: coarse)').matches;
+    // inspectable in DevTools (Elements panel, or document.documentElement.dataset.smoothScroll
+    // in the console) so it's obvious whether this is even active on a given device/browser
+    document.documentElement.setAttribute('data-smooth-scroll', (reduceMotion || isTouch) ? 'off' : 'on');
     if(reduceMotion || isTouch) return;
 
-    var ease = 0.1;
+    var ease = 0.18;
     var current = window.scrollY;
     var target = current;
     var raf = null;
