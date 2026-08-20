@@ -29,32 +29,6 @@
     *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
   }
 
-  /* SCROLL REVEAL — elements fade + rise into place as they enter the viewport, via IntersectionObserver.
-     translateY + a slight scale-up reads as noticeably more "arriving" than opacity alone. */
-  .reveal{
-    opacity: 0;
-    transform: translateY(60px) scale(0.96);
-    transition: opacity 1.4s cubic-bezier(0.25, 1, 0.5, 1), transform 1.4s cubic-bezier(0.25, 1, 0.5, 1);
-    transition-delay: var(--reveal-delay, 0s);
-    will-change: opacity, transform;
-  }
-  .reveal.in{ opacity: 1; transform: translateY(0) scale(1); }
-
-  /* MERGE TEXT — words start scattered (offset in a random direction, slightly
-     rotated and scaled down) and converge into place together, like pieces
-     snapping into their final layout. Applied via JS on load + scroll-reveal. */
-  .merge-word{
-    display: inline-block;
-    opacity: 0;
-    transform: translate(var(--mx,0), var(--my,0)) scale(var(--mscale,0.6)) rotate(var(--mrot,0deg));
-    transition: transform 1.15s cubic-bezier(0.16,0.9,0.25,1) var(--mdelay,0s),
-                opacity 0.85s ease var(--mdelay,0s);
-  }
-  .merge-word.merged{
-    opacity: 1;
-    transform: translate(0,0) scale(1) rotate(0deg);
-  }
-
   body{
     margin:0;
     background: var(--bg);
@@ -409,7 +383,6 @@
   padding: 60px 24px;
   overflow-y: auto;
   opacity: 0; pointer-events: none;
-  transition: opacity 0.3s cubic-bezier(0.25,0.1,0.25,1);
 }
 .attachment-modal.open{ opacity: 1; pointer-events: auto; }
 .attachment-modal-backdrop{
@@ -419,10 +392,7 @@
   position: relative; width: 100%; max-width: 880px;
   background: var(--bg-panel); border: 1px solid var(--rule); border-radius: var(--radius);
   padding: 36px;
-  transform: translateY(16px) scale(0.98);
-  transition: transform 0.35s cubic-bezier(0.16,0.9,0.25,1);
 }
-.attachment-modal.open .attachment-modal-panel{ transform: translateY(0) scale(1); }
 .attachment-modal-head{ display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 28px; }
 .attachment-modal-head h3{ font-size: 1.3rem; }
 .attachment-modal-close{
@@ -433,23 +403,7 @@
 
 .attachment-grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
 @media (max-width: 640px){ .attachment-grid{ grid-template-columns: 1fr; } }
-.attachment-card{
-  border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; background: var(--bg-panel-2);
-  /* Flow-up entrance, staggered per card, played each time the modal opens (the modal
-     itself sits at opacity:0 until .open is added, so there's always an already-painted
-     "closed" frame beforehand for this to transition from). */
-  opacity: 0;
-  transform: translateY(36px);
-  transition: opacity 0.65s cubic-bezier(0.25, 1, 0.5, 1), transform 0.65s cubic-bezier(0.25, 1, 0.5, 1);
-}
-.attachment-modal.open .attachment-card{ opacity: 1; transform: translateY(0); }
-.attachment-card:nth-child(1){ transition-delay: 0.05s; }
-.attachment-card:nth-child(2){ transition-delay: 0.12s; }
-.attachment-card:nth-child(3){ transition-delay: 0.19s; }
-.attachment-card:nth-child(4){ transition-delay: 0.26s; }
-.attachment-card:nth-child(5){ transition-delay: 0.33s; }
-.attachment-card:nth-child(6){ transition-delay: 0.4s; }
-.attachment-card:nth-child(n+7){ transition-delay: 0.46s; }
+.attachment-card{ border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; background: var(--bg-panel-2); }
 .attachment-media{
   width: 100%; aspect-ratio: 4/3; background: rgba(0,0,0,0.25);
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
@@ -459,21 +413,8 @@
 .attachment-media img, .attachment-media video{ width: 100%; height: 100%; object-fit: cover; display: block; }
 .attachment-media svg{ width: 30px; height: 30px; opacity: 0.6; }
 .attachment-media span{ font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; text-align: center; padding: 0 12px; }
-
-/* Filled attachment slots (real image, wired up via JS) invite a click to view full-size */
-.attachment-media.has-image{ cursor: zoom-in; }
-.attachment-media.has-image:focus-visible{ outline: 2px solid var(--accent-bright); outline-offset: -2px; }
-.attachment-media.has-image img{ transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); will-change: transform; }
-.attachment-media.has-image:hover img, .attachment-media.has-image:focus-visible img{ transform: scale(1.08); }
-.attachment-media .zoom-hint{
-  position: absolute; right: 8px; bottom: 8px; width: 30px; height: 30px; border-radius: 50%;
-  background: rgba(10,8,6,0.6); backdrop-filter: blur(2px);
-  display: flex; align-items: center; justify-content: center; color: #fff;
-  opacity: 0; transform: scale(0.8); transition: opacity 0.3s ease, transform 0.3s ease;
-  pointer-events: none;
-}
-.attachment-media .zoom-hint svg{ width: 15px; height: 15px; opacity: 1; }
-.attachment-media.has-image:hover .zoom-hint, .attachment-media.has-image:focus-visible .zoom-hint{ opacity: 1; transform: scale(1); }
+.attachment-media[role="button"]{ cursor: zoom-in; }
+.attachment-media[role="button"]:focus-visible{ outline: 2px solid var(--accent-bright); outline-offset: -2px; }
 
 .attachment-caption{ padding: 14px 16px; }
 .attachment-caption .a-title{ font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 0.92rem; color: var(--text); margin-bottom: 4px; }
@@ -485,15 +426,12 @@
   display: flex; align-items: center; justify-content: center;
   padding: 60px 24px;
   opacity: 0; pointer-events: none;
-  transition: opacity 0.3s cubic-bezier(0.25,0.1,0.25,1);
 }
 .img-lightbox.open{ opacity: 1; pointer-events: auto; }
 .img-lightbox-backdrop{ position: fixed; inset: 0; background: rgba(10,8,6,0.92); backdrop-filter: blur(6px); }
 .img-lightbox-inner{
   position: relative; max-width: min(94vw, 1400px); max-height: 90vh;
-  transform: scale(0.96); transition: transform 0.35s cubic-bezier(0.16,0.9,0.25,1);
 }
-.img-lightbox.open .img-lightbox-inner{ transform: scale(1); }
 .img-lightbox-inner img{
   display: block; max-width: 100%; max-height: 90vh; width: auto; height: auto;
   border-radius: var(--radius); box-shadow: 0 20px 60px rgba(0,0,0,0.55);
