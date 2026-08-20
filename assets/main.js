@@ -10,6 +10,64 @@
     onScroll();
   })();
 
+  // SMOOTH (INERTIA) SCROLL — eases wheel-driven scrolling into a lerped glide instead
+  // of the browser's native per-tick jump, for a heavier "gliding" feel on desktop.
+  // Deliberately animates the REAL window scroll position via scrollTo each frame
+  // (rather than a translated wrapper div) so nothing else on the page has to change:
+  // the fixed nav, the attachment modal, the image lightbox, and every getBoundingClientRect
+  // check the scroll-reveal system relies on all keep working exactly as before.
+  // Off entirely for touch (native momentum scroll already feels right there) and for
+  // prefers-reduced-motion. Keyboard scrolling (arrows/Page Up-Down/Home/End) is left
+  // native on purpose -- instant, predictable scrolling is what keyboard users expect.
+  (function(){
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var isTouch = window.matchMedia && window.matchMedia('(hover: none), (pointer: coarse)').matches;
+    if(reduceMotion || isTouch) return;
+
+    var ease = 0.1;
+    var current = window.scrollY;
+    var target = current;
+    var raf = null;
+
+    function maxScroll(){
+      return Math.max(document.documentElement.scrollHeight - window.innerHeight, 0);
+    }
+    function clamp(v, min, max){ return Math.min(Math.max(v, min), max); }
+
+    function tick(){
+      current += (target - current) * ease;
+      if(Math.abs(target - current) < 0.5){
+        current = target;
+        window.scrollTo({ top: current, left: 0, behavior: 'instant' });
+        raf = null;
+        return;
+      }
+      window.scrollTo({ top: current, left: 0, behavior: 'instant' });
+      raf = requestAnimationFrame(tick);
+    }
+
+    function onWheel(e){
+      // let anything with its own scroll region (the attachment modal, the lightbox)
+      // scroll natively instead of hijacking the wheel event
+      if(e.target.closest && e.target.closest('.attachment-modal, .img-lightbox')) return;
+      e.preventDefault();
+      target = clamp(target + e.deltaY, 0, maxScroll());
+      if(!raf){ raf = requestAnimationFrame(tick); }
+    }
+
+    // Keeps target in sync whenever the page scrolls some other way (anchor-link click,
+    // keyboard, browser back/forward restoring position) so the next wheel tick doesn't
+    // snap back to a stale target. Skipped mid-glide, where our own scrollTo calls are
+    // already the source of truth for the current frame.
+    function syncFromNative(){
+      if(raf) return;
+      current = target = window.scrollY;
+    }
+    window.addEventListener('scroll', syncFromNative, { passive: true });
+    window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('resize', function(){ target = clamp(target, 0, maxScroll()); });
+  })();
+
   (function(){
     var items = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
     if(!items.length) return;
@@ -185,12 +243,20 @@
       openBtn = trigger;
       var closeBtn = modal.querySelector('.attachment-modal-close');
       if(closeBtn) closeBtn.focus();
+      // lock html too, not just body -- in standards mode <html> is the scrolling
+      // element, so body-only overflow:hidden leaves the page scrollable behind the modal
+      document.documentElement.style.overflow = 'hidden';
       document.body.style.overflow = 'hidden';
     }
     function closeModal(modal){
       modal.classList.remove('open');
       modal.setAttribute('inert', '');
-      document.body.style.overflow = '';
+      // the image lightbox can sit on top of this modal -- only release the scroll
+      // lock if it isn't also still open
+      if(!document.querySelector('.img-lightbox.open')){
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+      }
       if(openBtn){ openBtn.focus(); openBtn = null; }
     }
     document.querySelectorAll('.attachment-btn[data-modal]').forEach(function(btn){
@@ -248,12 +314,18 @@
       lightbox.classList.add('open');
       lastTrigger = trigger;
       lbCloseBtn.focus();
+      document.documentElement.style.overflow = 'hidden';
       document.body.style.overflow = 'hidden';
     }
     function closeLightbox(){
       lightbox.classList.remove('open');
       lightbox.setAttribute('inert', '');
-      document.body.style.overflow = '';
+      // the lightbox can sit on top of an already-open attachment modal -- only
+      // release the scroll lock if that modal isn't also still open underneath
+      if(!document.querySelector('.attachment-modal.open')){
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+      }
       if(lastTrigger && lastTrigger.focus){ lastTrigger.focus(); }
       lastTrigger = null;
     }
