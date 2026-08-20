@@ -20,12 +20,35 @@
       <li><a href="../index.html#work"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="3.5" width="7" height="7" rx="1"/><rect x="3.5" y="13.5" width="7" height="7" rx="1"/><rect x="13.5" y="13.5" width="7" height="7" rx="1"/></svg><span class="label">Work</span></a></li>
       <li><a href="../index.html#contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span class="label">Contact</span></a></li>
     </ul>
-    <a class="nav-social" href="https://www.linkedin.com/in/lapherngwong/" target="_blank" rel="noopener">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.9 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8.5h4V23h-4V8.5zM8.5 8.5h3.8v2h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V23h-4v-6.9c0-1.65-.03-3.77-2.3-3.77-2.3 0-2.65 1.8-2.65 3.65V23h-4V8.5z"/></svg>
-      <span>LinkedIn</span>
-    </a>
+    <div class="nav-actions">
+      <button class="nav-social" data-modal="resume-modal" aria-haspopup="dialog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6M9 9h1"/></svg>
+        <span>Resume</span>
+      </button>
+      <a class="nav-social" href="https://www.linkedin.com/in/lapherngwong/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.9 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8.5h4V23h-4V8.5zM8.5 8.5h3.8v2h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V23h-4v-6.9c0-1.65-.03-3.77-2.3-3.77-2.3 0-2.65 1.8-2.65 3.65V23h-4V8.5z"/></svg>
+        <span>LinkedIn</span>
+      </a>
+    </div>
   </div>
 </header>
+
+<div class="attachment-modal resume-modal-wrap" id="resume-modal" role="dialog" aria-modal="true" aria-labelledby="resume-modal-title" inert>
+  <div class="attachment-modal-backdrop" data-modal-close></div>
+  <div class="attachment-modal-panel resume-modal-panel">
+    <div class="attachment-modal-head">
+      <h3 id="resume-modal-title">Resume — Lap Herng (Bryan) Wong</h3>
+      <button class="attachment-modal-close" data-modal-close>Close ×</button>
+    </div>
+    <iframe class="resume-frame" src="../assets/files/Lap_Herng_Wong(Bryan)_Resume.pdf" title="Resume preview — Lap Herng (Bryan) Wong"></iframe>
+    <div class="resume-modal-actions">
+      <a class="resume-download" href="../assets/files/Lap_Herng_Wong(Bryan)_Resume.pdf" download="Lap_Herng_Wong(Bryan)_Resume.pdf">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+        Download PDF
+      </a>
+    </div>
+  </div>
+</div>
 
 <main>
   <div class="wrap project-page-header row--monster">

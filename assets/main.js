@@ -105,9 +105,10 @@
     });
   });
 
-  // PROJECT ATTACHMENT MODAL — opens on button click, closes via the × button,
-  // backdrop click, or Escape. Uses inert to keep the hidden modal out of the
-  // tab order and out of screen-reader focus until it's actually open.
+  // MODAL — shared by the project attachment grid and the resume preview. Opens on
+  // trigger-button click, closes via the × button, backdrop click, or Escape. Uses inert
+  // to keep the hidden modal out of the tab order and out of screen-reader focus until
+  // it's actually open.
   (function(){
     var openBtn = null;
     function openModal(modal, trigger){
@@ -132,7 +133,7 @@
       }
       if(openBtn){ openBtn.focus(); openBtn = null; }
     }
-    document.querySelectorAll('.attachment-btn[data-modal]').forEach(function(btn){
+    document.querySelectorAll('[data-modal]').forEach(function(btn){
       btn.addEventListener('click', function(){
         var modal = document.getElementById(btn.getAttribute('data-modal'));
         if(modal) openModal(modal, btn);
