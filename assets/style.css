@@ -144,6 +144,7 @@
   .about-photo svg{ width: 44px; height: 44px; opacity: 0.7; }
   .about-photo span{ font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em; text-align: center; padding: 0 16px; }
 
+  .tools-label{ font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; color: rgba(240,238,232,0.9); font-weight: 500; margin-top: 26px; }
   .tool-logos{ display: flex; flex-wrap: wrap; gap: 22px; margin-top: 12px; }
   .tool-badge{ display: flex; flex-direction: column; align-items: center; gap: 6px; color: rgba(240,238,232,0.75); }
   .tool-badge svg{ width: 30px; height: 30px; }
@@ -430,25 +431,39 @@
 @media (max-width: 640px){ .attachment-grid{ grid-template-columns: 1fr; } }
 .attachment-card{
   border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; background: var(--bg-panel-2);
-  transition: border-color 0.3s cubic-bezier(0.25,0.1,0.25,1);
   /* Flow-up entrance, staggered per card, played each time the modal opens (the modal
      itself sits at opacity:0 until .open is added, so there's always an already-painted
-     "closed" frame beforehand for this to transition from). */
+     "closed" frame beforehand for this to transition from). border-color is listed last
+     and always kept at 0s delay (see the nth-child rules below) so the hover highlight
+     reacts instantly instead of inheriting the entrance stagger. */
   opacity: 0;
   transform: translateY(35px);
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s cubic-bezier(0.25,0.1,0.25,1);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.1s ease;
+  transition-delay: 0s, 0s, 0s;
 }
 .attachment-modal.open .attachment-card{ opacity: 1; transform: translateY(0); }
 /* Hovering the image itself highlights the whole card's border in the project's theme color,
-   matching the same hover treatment as the project rows on the homepage. */
-.attachment-card:has(.attachment-media:hover){ border-color: var(--tile-accent, var(--rule)); }
-.attachment-card:nth-child(1){ transition-delay: 0.08s; }
-.attachment-card:nth-child(2){ transition-delay: 0.16s; }
-.attachment-card:nth-child(3){ transition-delay: 0.24s; }
-.attachment-card:nth-child(4){ transition-delay: 0.32s; }
-.attachment-card:nth-child(5){ transition-delay: 0.4s; }
-.attachment-card:nth-child(6){ transition-delay: 0.48s; }
-.attachment-card:nth-child(n+7){ transition-delay: 0.56s; }
+   matching the same hover treatment as the project rows on the homepage. Toggled via a JS
+   class (see main.js) rather than a :has() selector -- :has() measurably adds ~70ms of style
+   recalc latency on this page, which read as a sluggish hover; a direct class toggle is instant. */
+.attachment-card.hover-active{ border-color: var(--tile-accent, var(--rule)); }
+.attachment-card:nth-child(1){ transition-delay: 0.08s, 0.08s, 0s; }
+.attachment-card:nth-child(2){ transition-delay: 0.16s, 0.16s, 0s; }
+.attachment-card:nth-child(3){ transition-delay: 0.24s, 0.24s, 0s; }
+.attachment-card:nth-child(4){ transition-delay: 0.32s, 0.32s, 0s; }
+.attachment-card:nth-child(5){ transition-delay: 0.4s, 0.4s, 0s; }
+.attachment-card:nth-child(6){ transition-delay: 0.48s, 0.48s, 0s; }
+.attachment-card:nth-child(n+7){ transition-delay: 0.56s, 0.56s, 0s; }
+/* Shadow Requiem has 5 attachment cards -- center the odd one out on its own row
+   instead of leaving it stranded in the left column. */
+#attach-shadow .attachment-grid > .attachment-card:nth-child(5):last-child{
+  grid-column: 1 / -1;
+  width: calc(50% - 11px);
+  margin: 0 auto;
+}
+@media (max-width: 640px){
+  #attach-shadow .attachment-grid > .attachment-card:nth-child(5):last-child{ width: 100%; }
+}
 .attachment-media{
   width: 100%; aspect-ratio: 4/3; background: rgba(0,0,0,0.25);
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;

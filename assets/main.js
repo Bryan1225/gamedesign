@@ -105,6 +105,21 @@
     });
   });
 
+  // ATTACHMENT HOVER BORDER — highlights an attachment card's border in the project's theme
+  // color while its image is hovered or keyboard-focused. Done via a JS class toggle rather
+  // than a `:has(.attachment-media:hover)` CSS selector: :has() measurably adds real style
+  // recalculation latency on a page this size, which read as a sluggish, delayed hover.
+  (function(){
+    document.querySelectorAll('.attachment-media').forEach(function(el){
+      var card = el.closest('.attachment-card');
+      if(!card) return;
+      el.addEventListener('mouseenter', function(){ card.classList.add('hover-active'); });
+      el.addEventListener('mouseleave', function(){ card.classList.remove('hover-active'); });
+      el.addEventListener('focusin', function(){ card.classList.add('hover-active'); });
+      el.addEventListener('focusout', function(){ card.classList.remove('hover-active'); });
+    });
+  })();
+
   // MODAL — shared by the project attachment grid and the resume preview. Opens on
   // trigger-button click, closes via the × button, backdrop click, or Escape. Uses inert
   // to keep the hidden modal out of the tab order and out of screen-reader focus until
