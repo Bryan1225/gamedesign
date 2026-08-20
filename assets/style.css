@@ -90,16 +90,18 @@
   .nav-links a{ text-decoration: none; color: rgba(237,230,217,0.82); transition: color 0.25s cubic-bezier(0.25,0.1,0.25,1); display: flex; align-items: center; gap: 7px; }
   .nav-links a:hover{ color: #fff; }
   .nav-links svg{ width: 13px; height: 13px; opacity: 0.85; flex-shrink: 0; }
+  .nav-actions{ display: flex; align-items: center; gap: 10px; }
   .nav-social{
     color: #fff !important; border: 1px solid rgba(255,255,255,0.25); padding: 7px 14px; border-radius: 20px;
     font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; text-decoration: none; letter-spacing: 0.04em;
     display: flex; align-items: center; gap: 7px; text-transform: uppercase;
+    background: none; cursor: pointer;
     transition: border-color 0.25s cubic-bezier(0.25,0.1,0.25,1), color 0.25s cubic-bezier(0.25,0.1,0.25,1);
   }
   .nav-social:hover{ border-color: var(--accent-bright); color: var(--accent-bright) !important; }
   .nav-social svg{ width: 12px; height: 12px; }
   @media (max-width: 780px){ .nav-links span.label{ display:none; } .nav-links{ gap: 18px; } }
-  @media (max-width: 560px){ .nav-social span{ display:none; } }
+  @media (max-width: 560px){ .nav-actions span{ display:none; } }
 
   /* HERO BANNER — full-bleed image placeholder, nav overlays this */
   .hero-banner{
@@ -463,6 +465,24 @@
 .attachment-caption{ padding: 14px 16px; }
 .attachment-caption .a-title{ font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 0.92rem; color: var(--text); margin-bottom: 4px; }
 .attachment-caption .a-desc{ font-family: 'Quicksand', sans-serif; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+
+/* ============ RESUME PREVIEW MODAL ============ */
+.resume-modal-panel{ max-width: 760px; }
+.resume-frame{
+  width: 100%; height: 72vh; border: 1px solid var(--rule); border-radius: var(--radius);
+  background: #fff; margin-bottom: 20px; display: block;
+}
+.resume-modal-actions{ display: flex; justify-content: flex-end; }
+.resume-download{
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--tile-accent, var(--accent)); color: #15110E;
+  padding: 10px 20px; border-radius: 20px; text-decoration: none;
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase;
+  transition: transform 0.25s cubic-bezier(0.25,0.1,0.25,1), opacity 0.25s cubic-bezier(0.25,0.1,0.25,1);
+}
+.resume-download:hover{ transform: scale(1.04); opacity: 0.88; }
+.resume-download svg{ width: 14px; height: 14px; }
+@media (max-width: 640px){ .resume-frame{ height: 56vh; } }
 
 /* ============ IMAGE LIGHTBOX — full-size view of a clicked attachment image ============ */
 .img-lightbox{
