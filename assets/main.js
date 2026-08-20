@@ -10,6 +10,77 @@
     onScroll();
   })();
 
+  // SCROLL REVEAL — each .reveal element starts invisible, 35px below its normal spot, and
+  // animates to full opacity/normal position over 0.6s (cubic-bezier(0.16,1,0.3,1), so it
+  // decelerates smoothly). Plays once: once an element is marked revealed it's never hidden
+  // again, so scrolling back up and down doesn't replay it. Elements that share a parent
+  // (e.g. the attachment cards in one .attachment-grid) stagger 80ms apart via --reveal-delay,
+  // set once at setup based on each element's position among its own siblings -- not a single
+  // page-wide counter, so unrelated reveals elsewhere on the page don't drift out of sync.
+  // Reduced motion: skip entirely, mark everything revealed immediately so nothing is ever
+  // hidden (the CSS also independently disables the transition, this just avoids relying on
+  // scroll position to ever show the content at all).
+  (function(){
+    var items = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+    if(!items.length) return;
+
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduceMotion){
+      items.forEach(function(el){ el.classList.add('in'); });
+      return;
+    }
+
+    var groupCounts = new Map();
+    items.forEach(function(el){
+      var parent = el.parentElement;
+      var idx = groupCounts.get(parent) || 0;
+      el.style.setProperty('--reveal-delay', (idx * 0.08) + 's');
+      groupCounts.set(parent, idx + 1);
+    });
+
+    var revealed = new WeakSet();
+    function revealOne(el){
+      if(revealed.has(el)) return;
+      revealed.add(el);
+      el.classList.add('in');
+    }
+
+    // Checks actual current position rather than watching for a "crossing" event —
+    // this can't skip an element even if the scroll jumps in one big move (fast fling,
+    // dragging the scrollbar, etc.), which IntersectionObserver's transition-based
+    // model can miss.
+    function checkReveal(){
+      var vh = window.innerHeight || document.documentElement.clientHeight;
+      items.forEach(function(el){
+        if(revealed.has(el)) return;
+        var rect = el.getBoundingClientRect();
+        if(rect.top < vh * 0.92){ revealOne(el); }
+      });
+    }
+
+    var ticking = false;
+    function queueCheck(){
+      if(ticking) return;
+      ticking = true;
+      requestAnimationFrame(function(){ checkReveal(); ticking = false; });
+    }
+
+    window.addEventListener('scroll', queueCheck, { passive: true });
+    window.addEventListener('resize', queueCheck);
+    // capture:true also catches scroll events bubbling from a nested scroll container,
+    // in case the page itself isn't the scrolling element in the current host environment
+    document.addEventListener('scroll', queueCheck, { passive: true, capture: true });
+
+    checkReveal();
+    window.addEventListener('load', checkReveal);
+    setTimeout(checkReveal, 400);
+    setTimeout(checkReveal, 1200);
+
+    // hard safety net: never leave content permanently invisible if scrolling somehow
+    // never fires a usable event in a given environment
+    setTimeout(function(){ items.forEach(revealOne); }, 3000);
+  })();
+
   // Click-to-play: the iframe is only created the moment the user clicks, never while the
   // case-study panel is collapsed. Loading YouTube's player inside a zero-height/hidden
   // container is a plausible reason a live embed can misbehave; building it fresh at a
