@@ -81,7 +81,7 @@
     function revealOne(el){
       if(revealed.has(el)) return;
       revealed.add(el);
-      el.style.setProperty('--reveal-delay', (seenCount % 3) * 0.08 + 's');
+      el.style.setProperty('--reveal-delay', (seenCount % 3) * 0.15 + 's');
       seenCount++;
       el.classList.add('in');
     }
@@ -189,7 +189,7 @@
         var d = DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)];
         var rot = (Math.random() * 34 - 17).toFixed(1);
         var scale = (0.4 + Math.random() * 0.25).toFixed(2);
-        var delay = Math.min(i, 20) * 0.055;
+        var delay = Math.min(i, 24) * 0.09;
         span.style.setProperty('--mx', d.x + 'px');
         span.style.setProperty('--my', d.y + 'px');
         span.style.setProperty('--mrot', rot + 'deg');
