@@ -300,6 +300,14 @@
   .about-body strong{ color: var(--text); font-weight: 500; }
   .focus-row{ display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
 
+  /* ACHIEVEMENTS & INDUSTRY COLLABORATIONS */
+  .achieve-grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  @media (max-width: 700px){ .achieve-grid{ grid-template-columns: 1fr; } }
+  .achieve-card{ border: 1px solid var(--rule); border-radius: var(--radius); background: var(--bg-panel); padding: 26px 28px; }
+  .achieve-kind{ font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-bright); margin-bottom: 10px; }
+  .achieve-card h3{ font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 1.15rem; color: var(--text); margin-bottom: 8px; }
+  .achieve-card p{ font-size: 0.92rem; color: var(--text-muted); margin: 0; line-height: 1.5; }
+
   /* CONTACT */
   .contact-inner{ display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 24px; }
   .contact-inner h2{ font-size: clamp(1.5rem, 3vw, 2rem); max-width: 18ch; }
